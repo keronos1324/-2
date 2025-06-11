@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Викторина: Столицы Азии</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-box {
+            text-align: center;
+            padding: 10px 20px;
+        }
+        
+        .info-box h3 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .info-box .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .question-container {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        .flag-container {
+            width: 200px;
+            height: 120px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .flag {
+            font-size: 4rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .country-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        /* Контейнер для плиток с ответами */
+        .tiles-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        
+        .tile {
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 5px;
+            font-size: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 70px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+        
+        .tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to bottom, #2980b9, #2573a7);
+        }
+        
+        .tile.correct {
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            transform: scale(1.05);
+        }
+        
+        .tile.incorrect {
+            background: linear-gradient(to bottom, #e74c3c, #c0392b);
+            transform: scale(0.95);
+        }
+        
+        .result-container {
+            min-height: 80px;
+            width: 100%;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            transition: all 0.4s ease;
+        }
+        
+        .correct-msg {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+        
+        .incorrect-msg {
+            background: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+            border: 2px solid #c0392b;
+        }
+        
+        .start-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .start-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .start-description {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        .rules {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+        
+        .rules h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .rules ul {
+            padding-left: 20px;
+        }
+        
+        .rules li {
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.4rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+            margin-top: 20px;
+        }
+        
+        .start-btn:hover {
+            background: linear-gradient(to right, #219653, #27ae60);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.6);
+        }
+        
+        .timer-container {
+            width: 100%;
+            max-width: 400px;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .timer-bar {
+            height: 100%;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            width: 100%;
+            transition: width 1s linear;
+            border-radius: 10px;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .result-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .result-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .result-score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 30px 0;
+        }
+        
+        .result-message {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 40px;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.4rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            margin-top: 20px;
+        }
+        
+        .restart-btn:hover {
+            background: linear-gradient(to right, #2980b9, #2573a7);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.6);
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .country-name {
+                font-size: 1.7rem;
+            }
+            
+            .flag {
+                font-size: 3.5rem;
+            }
+            
+            .info-box h3 {
+                font-size: 0.9rem;
+            }
+            
+            .info-box .value {
+                font-size: 1.5rem;
+            }
+            
+            .game-info {
+                padding: 10px;
+            }
+            
+            .start-title, .result-title {
+                font-size: 2rem;
+            }
+            
+            .result-score {
+                font-size: 3rem;
+            }
+            
+            .tiles-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .tile {
+                padding: 12px 5px;
+                font-size: 0.9rem;
+                min-height: 60px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.7rem;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .country-name {
+                font-size: 1.5rem;
+            }
+            
+            .flag-container {
+                width: 170px;
+                height: 100px;
+            }
+            
+            .flag {
+                font-size: 3rem;
+            }
+            
+            .tiles-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            
+            .tile {
+                padding: 10px 5px;
+                font-size: 0.85rem;
+                min-height: 50px;
+            }
+            
+            .result-container {
+                font-size: 1.1rem;
+                padding: 15px;
+            }
+            
+            .game-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .start-title, .result-title {
+                font-size: 1.8rem;
+            }
+            
+            .result-score {
+                font-size: 2.5rem;
+            }
+            
+            .result-message {
+                font-size: 1.4rem;
+            }
+            
+            .start-btn, .restart-btn {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-flag"></i> Столицы стран Азии</h1>
+            <p>Проверьте свои знания географии Азии! Выберите столицу страны из плиток внизу экрана.</p>
+        </div>
+        
+        <!-- Стартовый экран -->
+        <div class="start-screen" id="start-screen">
+            <h2 class="start-title">Викторина: Столицы Азии</h2>
+            <p class="start-description">Проверьте свои знания географии Азии! У вас есть 5 минут, чтобы ответить на максимальное количество вопросов. За каждый правильный ответ вы получаете 10 баллов.</p>
+            
+            <div class="rules">
+                <h3>Правила игры:</h3>
+                <ul>
+                    <li>Игра длится <strong>5 минут</strong></li>
+                    <li>За каждый правильный ответ вы получаете <strong>10 баллов</strong></li>
+                    <li>На экране будет показан флаг страны и её название</li>
+                    <li>Выберите правильную столицу из плиток внизу экрана</li>
+                    <li>По истечении времени игра завершится автоматически</li>
+                </ul>
+            </div>
+            
+            <button class="start-btn" id="start-btn">
+                Начать игру <i class="fas fa-play"></i>
+            </button>
+        </div>
+        
+        <!-- Игровой экран (изначально скрыт) -->
+        <div class="content" id="game-screen" style="display:none;">
+            <div class="game-info">
+                <div class="info-box">
+                    <h3>Счет</h3>
+                    <div class="value" id="score">0</div>
+                </div>
+                <div class="info-box">
+                    <h3>Осталось</h3>
+                    <div class="value" id="time">05:00</div>
+                </div>
+                <div class="info-box">
+                    <h3>Ответов</h3>
+                    <div class="value" id="answers">0</div>
+                </div>
+            </div>
+            
+            <div class="timer-container">
+                <div class="timer-bar" id="timer-bar"></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="flag-container">
+                    <div class="flag" id="flag">🇯🇵</div>
+                </div>
+                <div class="country-name" id="country-name">Япония</div>
+            </div>
+            
+            <!-- Контейнер для плиток с ответами -->
+            <div class="tiles-container" id="tiles-container">
+                <!-- Плитки будут генерироваться динамически -->
+            </div>
+            
+            <div class="result-container" id="result-container">
+                Выберите столицу страны из плиток ниже
+            </div>
+        </div>
+        
+        <!-- Экран результатов (изначально скрыт) -->
+        <div class="result-screen" id="result-screen" style="display:none;">
+            <h2 class="result-title">Игра завершена!</h2>
+            <div class="result-message" id="result-message">Отличный результат!</div>
+            <div class="result-score" id="final-score">0</div>
+            <p>Правильных ответов: <strong id="correct-answers">0</strong></p>
+            <p>Неправильных ответов: <strong id="incorrect-answers">0</strong></p>
+            <button class="restart-btn" id="restart-btn">
+                Играть снова <i class="fas fa-redo"></i>
+            </button>
+        </div>
+        
+        <div class="footer">
+            <p>Викторина по географии Азии | Сделано с ❤️ для любителей путешествий</p>
+        </div>
+    </div>
+
+    <script>
+        // База данных стран Азии и их столиц
+        const countries = [
+            { name: "Япония", capital: "Токио", flag: "🇯🇵" },
+            { name: "Китай", capital: "Пекин", flag: "🇨🇳" },
+            { name: "Южная Корея", capital: "Сеул", flag: "🇰🇷" },
+            { name: "Индия", capital: "Нью-Дели", flag: "🇮🇳" },
+            { name: "Индонезия", capital: "Джакарта", flag: "🇮🇩" },
+            { name: "Таиланд", capital: "Бангкок", flag: "🇹🇭" },
+            { name: "Вьетнам", capital: "Ханой", flag: "🇻🇳" },
+            { name: "Малайзия", capital: "Куала-Лумпур", flag: "🇲🇾" },
+            { name: "Филиппины", capital: "Манила", flag: "🇵🇭" },
+            { name: "Сингапур", capital: "Сингапур", flag: "🇸🇬" },
+            { name: "Израиль", capital: "Иерусалим", flag: "🇮🇱" },
+            { name: "Саудовская Аравия", capital: "Эр-Рияд", flag: "🇸🇦" },
+            { name: "ОАЭ", capital: "Абу-Даби", flag: "🇦🇪" },
+            { name: "Катар", capital: "Доха", flag: "🇶🇦" },
+            { name: "Турция", capital: "Анкара", flag: "🇹🇷" },
+            { name: "Иран", capital: "Тегеран", flag: "🇮🇷" },
+            { name: "Ирак", capital: "Багдад", flag: "🇮🇶" },
+            { name: "Афганистан", capital: "Кабул", flag: "🇦🇫" },
+            { name: "Пакистан", capital: "Исламабад", flag: "🇵🇰" },
+            { name: "Бангладеш", capital: "Дакка", flag: "🇧🇩" },
+            { name: "Шри-Ланка", capital: "Шри-Джаяварденепура-Котте", flag: "🇱🇰" },
+            { name: "Непал", capital: "Катманду", flag: "🇳🇵" },
+            { name: "Бутан", capital: "Тхимпху", flag: "🇧🇹" },
+            { name: "Мальдивы", capital: "Мале", flag: "🇲🇻" },
+            { name: "Монголия", capital: "Улан-Батор", flag: "🇲🇳" },
+            { name: "Казахстан", capital: "Нур-Султан", flag: "🇰🇿" },
+            { name: "Узбекистан", capital: "Ташкент", flag: "🇺🇿" },
+            { name: "Туркменистан", capital: "Ашхабад", flag: "🇹🇲" },
+            { name: "Кыргызстан", capital: "Бишкек", flag: "🇰🇬" },
+            { name: "Таджикистан", capital: "Душанбе", flag: "🇹🇯" }
+        ];
+
+        // Элементы DOM
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const startButton = document.getElementById('start-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const flagElement = document.getElementById('flag');
+        const countryNameElement = document.getElementById('country-name');
+        const resultContainer = document.getElementById('result-container');
+        const scoreElement = document.getElementById('score');
+        const timeElement = document.getElementById('time');
+        const answersElement = document.getElementById('answers');
+        const timerBar = document.getElementById('timer-bar');
+        const finalScoreElement = document.getElementById('final-score');
+        const correctAnswersElement = document.getElementById('correct-answers');
+        const incorrectAnswersElement = document.getElementById('incorrect-answers');
+        const resultMessageElement = document.getElementById('result-message');
+        const tilesContainer = document.getElementById('tiles-container');
+
+        // Переменные игры
+        let score = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let totalAnswers = 0;
+        let gameTimer;
+        let timeLeft = 300; // 5 минут в секундах
+        let currentCountry;
+        let correctCapital;
+
+        // Инициализация игры
+        function initGame() {
+            // Сброс переменных
+            score = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            totalAnswers = 0;
+            timeLeft = 300;
+            
+            // Обновление UI
+            scoreElement.textContent = score;
+            answersElement.textContent = totalAnswers;
+            timeElement.textContent = formatTime(timeLeft);
+            timerBar.style.width = '100%';
+            
+            // Показать игровой экран
+            startScreen.style.display = 'none';
+            resultScreen.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            
+            // Запустить таймер
+            startTimer();
+            
+            // Сгенерировать первый вопрос
+            nextQuestion();
+        }
+
+        // Форматирование времени (минуты:секунды)
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+
+        // Запуск таймера
+        function startTimer() {
+            clearInterval(gameTimer);
+            
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                timeElement.textContent = formatTime(timeLeft);
+                timerBar.style.width = `${(timeLeft / 300) * 100}%`;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        // Выбор случайной страны
+        function getRandomCountry() {
+            const randomIndex = Math.floor(Math.random() * countries.length);
+            return countries[randomIndex];
+        }
+
+        // Генерация случайных столиц
+        function getRandomCapitals(excludeCapital, count) {
+            const capitals = [];
+            const allCapitals = [...countries.map(c => c.capital)];
+            
+            // Удаляем правильную столицу из списка
+            const filteredCapitals = allCapitals.filter(c => c !== excludeCapital);
+            
+            // Перемешиваем массив
+            const shuffled = filteredCapitals.sort(() => 0.5 - Math.random());
+            
+            // Берем нужное количество
+            return shuffled.slice(0, count);
+        }
+
+        // Отображение нового вопроса
+        function nextQuestion() {
+            currentCountry = getRandomCountry();
+            flagElement.textContent = currentCountry.flag;
+            countryNameElement.textContent = currentCountry.name;
+            correctCapital = currentCountry.capital;
+            
+            // Очищаем контейнер с плитками
+            tilesContainer.innerHTML = '';
+            
+            // Генерируем 24 случайные столицы + 1 правильную
+            const allCapitals = getRandomCapitals(correctCapital, 24);
+            allCapitals.push(correctCapital);
+            
+            // Перемешиваем массив
+            const shuffledCapitals = allCapitals.sort(() => 0.5 - Math.random());
+            
+            // Создаем плитки
+            shuffledCapitals.forEach(capital => {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                tile.textContent = capital;
+                tile.addEventListener('click', () => checkAnswer(capital));
+                tilesContainer.appendChild(tile);
+            });
+            
+            resultContainer.textContent = "Выберите столицу страны из плиток ниже";
+            resultContainer.className = "result-container";
+        }
+
+        // Проверка ответа
+        function checkAnswer(selectedCapital) {
+            // Проверяем, что игра не завершена
+            if (timeLeft <= 0) return;
+            
+            totalAnswers++;
+            answersElement.textContent = totalAnswers;
+            
+            // Находим плитку с выбранным ответом
+            const tiles = document.querySelectorAll('.tile');
+            tiles.forEach(tile => {
+                if (tile.textContent === selectedCapital) {
+                    if (selectedCapital === correctCapital) {
+                        tile.classList.add('correct');
+                        score += 10;
+                        correctAnswers++;
+                        resultContainer.textContent = `Правильно! Столица ${currentCountry.name} - ${correctCapital}`;
+                        resultContainer.className = "result-container correct-msg";
+                    } else {
+                        tile.classList.add('incorrect');
+                        incorrectAnswers++;
+                        resultContainer.textContent = `Неправильно! Столица ${currentCountry.name} - ${correctCapital}`;
+                        resultContainer.className = "result-container incorrect-msg";
+                        
+                        // Показываем правильный ответ
+                        tiles.forEach(t => {
+                            if (t.textContent === correctCapital) {
+                                t.classList.add('correct');
+                            }
+                        });
+                    }
+                }
+            });
+            
+            scoreElement.textContent = score;
+            
+            // Отключаем все плитки после выбора
+            tiles.forEach(tile => {
+                tile.style.pointerEvents = 'none';
+            });
+            
+            // Переход к следующему вопросу через 1.5 секунды
+            setTimeout(() => {
+                nextQuestion();
+            }, 1500);
+        }
+
+        // Завершение игры
+        function endGame() {
+            clearInterval(gameTimer);
+            
+            // Определение сообщения по результатам
+            let message;
+            if (score >= 300) {
+                message = "Превосходно! Вы настоящий эксперт по Азии!";
+            } else if (score >= 200) {
+                message = "Отличный результат! Отличные знания географии!";
+            } else if (score >= 100) {
+                message = "Хороший результат! Продолжайте изучать Азию!";
+            } else {
+                message = "Неплохо! Попробуйте еще раз для лучшего результата!";
+            }
+            
+            // Обновление UI экрана результатов
+            finalScoreElement.textContent = score;
+            correctAnswersElement.textContent = correctAnswers;
+            incorrectAnswersElement.textContent = incorrectAnswers;
+            resultMessageElement.textContent = message;
+            
+            // Показать экран результатов
+            gameScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+        }
+
+        // Обработчики событий
+        startButton.addEventListener('click', initGame);
+        restartButton.addEventListener('click', initGame);
+    </script>
+</body>
+</html>
